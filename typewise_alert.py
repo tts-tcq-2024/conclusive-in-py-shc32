@@ -20,12 +20,13 @@ def classify_temperature_breach(coolingType, temperatureInC):
   elif coolingType == 'MED_ACTIVE_COOLING':
     lowerLimit = 0
     upperLimit = 40
-  return infer_breach(temperatureInC, lowerLimit, upperLimit)
+  return lowerLimit, upperLimit
 
 
 def check_and_alert(alertTarget, batteryChar, temperatureInC):
   breachType =\
-    classify_temperature_breach(batteryChar['coolingType'], temperatureInC)
+    lowerLimit, upperLimit = classify_temperature_breach(batteryChar['coolingType'])
+  infer_breach(temperatureInC, lowerLimit, upperLimit)
   if alertTarget == 'TO_CONTROLLER':
     send_to_controller(breachType)
   elif alertTarget == 'TO_EMAIL':
