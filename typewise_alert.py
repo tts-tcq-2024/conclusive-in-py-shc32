@@ -8,22 +8,20 @@ def infer_breach(value, lowerLimit, upperLimit):
   return 'NORMAL'
 
 
-def classify_temperature_breach(coolingType):
-  #lowerLimit = 0
-  upperLimit = {
-    'PASSIVE_COOLING' : 35,
-    'HI_ACTIVE_COOLING' : 45,
-    'MED_ACTIVE_COOLING' : 40
+def classify_temperature_breach(coolingType, temperatureInC):
+  temperature_range = {
+    'PASSIVE_COOLING' : (0, 35),
+    'HI_ACTIVE_COOLING' : (0, 45),
+    'MED_ACTIVE_COOLING' : (0, 40)
   }
-  upperLimit = coolingType
-  return upperLimit
+  lowerLimit, upperLimit = temperature_range.get(coolingType, (0, 0))
+  return infer_breach(temperatureInC, lowerLimit, upperLimit)
 
 
 def check_and_alert(alertTarget, batteryChar, temperatureInC):
   breachType =\
-  lowerLimit = 0
-  upperLimit = classify_temperature_breach(batteryChar['coolingType'])
-  infer_breach(temperatureInC, lowerLimit, upperLimit)
+  classify_temperature_breach(batteryChar['coolingType'], temperatureInC)
+  
   if alertTarget == 'TO_CONTROLLER':
     send_to_controller(breachType)
   elif alertTarget == 'TO_EMAIL':
